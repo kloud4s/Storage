@@ -1,0 +1,62 @@
+Upgrade 9.8P11 To 9.8P19
+1. Before doing the upgrade first need to do the pre-checks
+ 
+Pre check commands:
+-------------------
+>>    version
+>>    node show
+>>    metrocluster check lif show
+>>    statistics lif show
+>>    disk show -broken
+>>    system health status show
+>>    system health subsystem show
+>>    system node show -fields uptime
+>>    system controller environment show -node *
+>>    system node run -node * -command storage show fault
+>>    cf status
+>>    igroup show
+>>    iscsi session show
+>>    cluster show
+>>    network port show
+>>    network interface show
+>>    network port ifgrp show
+>>    sp show
+>>    lun show
+>>    lun show -state offline
+>>    aggr show
+>>    aggr show -state offline
+>>    cluster peer show                        
+>>    vserver peer show
+>>    export-policy show
+>>    export-policy rule show
+>>    nfs show
+>>    nfs status
+>>    cifs share show
+>>    cifs session show
+>>    dns show
+>>    vscan show
+>>    export-policy rule show -instance
+>>    services unix-user show
+>>    services unix-group show
+>>    snapmirror show
+>>    snapmirror list
+>>    net route show -vserver *
+--------------------------------------------------------------------------------------------------------------------------------------
+1. Check and conform the  current version.
+
+
+--------------------------------------------------------------------------------------------------------------------------------------
+
+
+ 
+1. Verify the disks if any disks are broken, or not
+2. If you see any disk broken, no need to do the upgrade, until the disk replace.
+
+
+--------------------------------------------------------------------------------------------------------------------------------------
+1. Check the health status.
+
+
+--------------------------------------------------------------------------------------------------------------------------------------
+
+
