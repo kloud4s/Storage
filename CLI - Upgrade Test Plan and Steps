@@ -1,0 +1,75 @@
+Test Plan
+===============================
+Before upgrading the Storage:
+1. Perform Health checks and prechecks on the array.
+2. Should not proceed with the upgrade if we have any alerts, hardware failures, or space issues on the array.
+3. Pre-checks should be performed by NetApp support.
+4. Post-health checks need to be performed after upgrading the firmware with the help of NetApp Support.
+5. Suspending SnapMirror operations
+Cluster clouddr-bh is running SnapMirror.
+To prevent SnapMirror transfers from failing, we must suspend SnapMirror operations and upgrade
+destination nodes before upgrading source nodes.
+	(i) Suspend SnapMirror transfers for a destination volume
+	(ii) Upgrade the node that contains the destination volume
+	(iii) Upgrade the node that contains the source volume
+	(iv) Resume the SnapMirror transfers for the destination volume.
+Note: SnapMirror transfers for all other destination volumes can continue while the nodes that contain the original destination and source volumes are upgraded.
+
+
+Implementation Plan:
+==============================
+We must copy a software image from the NetApp Support Site to an HTTP or FTP server on your network so that nodes can access the image.
+1. The target ONTAP software can be downloaded from Software Downloads area of the NetApp Support Site
+2. Copy the software image (900_q_image.tgz) from the NetApp Support Site to the directory on the HTTP or FTP server from which the image will be served.
+
+Page 2
+Steps Involved:
+--------------------------------------------------
+1.Download the target ONTAP software package:
+cluster image package get -url location
+
+2.Verify that the software package is available in the cluster package repository:
+cluster image package show-repository
+
+3.Verify that the cluster is ready to be upgraded nondisruptively:
+cluster image validate -version package_version_number
+
+4.Optional: If desired, generate a software upgrade estimate:
+cluster image update -version package_version_number -estimate-only
+
+5.Perform the software upgrade:
+cluster image update -version package_version_number
+
+This command validates that each cluster component is ready to be upgraded, installs the target ONTAP image on each node in the cluster, and then performs a nondisruptive upgrade in the background. If an issue is encountered, the update pauses and prompts us to take corrective action.
+We can use the cluster image show-update-progress command to view details about the issue.
+
+After correcting the issue, we can resume the update by using the command.
+cluster image resume-update
+
+If the cluster consists of 2 through 6 nodes, a rolling upgrade is performed. 
+After completing each takeover and each giveback, the upgrade waits for 8 minutes to enable client applications to recover from the pause in I/O that occurs during the takeover and giveback.
+If the environment requires more or less time for client stabilization, we can use the -stabilize-minutes parameter to specify a different amount of stabilization time.
+
+6. Optional: If necessary, manage the upgrade process:
+	a. To Monitor the status and estimated duration of the upgrade, enter this command
+cluster image show-update-progress
+	b. To view the log of each task that has executed during the upgrade, enter this command
+cluster image show-update-log
+	c. To pause the upgrade, enter this command
+cluster image pause-update
+	d. To resume a paused upgrade, enter this command
+cluster image resume-update
+	e. To cancel the upgrade, enter this command
+cluster image cancel-update
+
+7.Display the cluster update history to verify that the upgrade was completed successfully for
+each node:
+cluster image show-update-history
+
+8.Trigger an AutoSupport notification:
+autosupport invoke -node * -type all -message "MAINT=END Finishing_NDU"
+
+Validation Plan:
+1. Validate ONTAP has been successfully upgraded to 9.11.1P5
+2. Verify all hosts connections.
+3. Post Health check on the Array.
