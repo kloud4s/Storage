@@ -1,0 +1,79 @@
+ONTAP Data Processing latency - Resolution Guide
+
+Description: 
+	• Data Processing (AIQUM) or Data (CLI) actually covers more than just the CPU D-blade delay, it includes the following:
+	• CPU D-blade delay
+	• WAFL Suspend delay
+	• WAFL CP delay 
+	• Notes: 
+	• WAFL Suspend delay and WAFL CP delay are not as common as the CPU D-blade delay, and they are difficult to troubleshoot. So they are not discussed in this KB
+	• In case Data Processing or Data latency is observed and the contents in this KB doesn't help, please contact NetApp Support for further troubleshooting
+	• NetApp internal tools (e.g. AIQ PAS) have a more granular latency breakdown to help differentiate these WAFL delays, the mapping for various Delay Centers can be found from What are the Delay Centers from different performance monitoring tools?
+	• This CPU D-blade delay is usually shown as follows:
+	• Active IQ Unified Manager: latency shown in Data Processing
+	• Command line qos statistics volume latency show: latency shown in the Data column
+
+Example:
+Cluster::>rows 0;date;qos statistics volume latency show
+Workload            ID    Latency    Network    Cluster       Data       Disk        QoS      NVRAM
+--------------- ------ ---------- ---------- ---------- ----------  ---------  ---------  ---------
+-total-              -   136.49ms    99.00us    70.00us   136.17ms   153.00us        0ms        0ms
+vserver1_vol1..   4201   206.05ms   130.00us        0ms   205.88ms    44.00us        0ms        0ms
+vserver5_vol8..   7704  1309.00us   351.00us     1.00us   834.00us   114.00us        0ms     9.00us
+-total-              -   140.29ms   103.00us    75.00us   139.94ms   174.00us        0ms        0ms
+vserver1_vol1..   4201   379.03ms   127.00us        0ms   378.73ms   175.00us        0ms        0ms
+vserver5_vol8..   7704     2.02ms   309.00us     1.30us  1820.00us   105.00us        0ms     9.00us
+Note: This is a secondary article on how to troubleshoot ONTAP 9 performance, please see the main ONTAP 9 performance troubleshooting Resolution Guide
+
+Procedure
+        1. Determine if high CPU is an issue causing latency	        • How to determine if high CPU utilization is an issue
+	        • Run qos statistics volume latency show
+	        • Is latency in the Data Column?
+	        • If yes, continue on
+	        • If no, begin investigation elsewhere
+        2. Use the qos statistics workload resource cpu show to:	Example: CPU is highest on User-Default, so frontend CIFS/FCP/iSCSI/NFS workload is the cause and can be identified by volume in step 3
+        • Determine top workloads	cluster1::> qos statistics workload resource cpu show
+ -node nodeB
+Workload               ID   CPU
+------------------ ------ -----
+-total- (100%)          -   70%
+User-Default            -   42%
+_SNAPMIRROR             -   20%
+_Efficiency_BestEffort  -    8%
+        • See if internal workloads are running
+        • Compare utilization to User-Default or user workloads
+Note: wafltop may also be used to check this
+        3. Use the qos statistics volume resource cpu show to:	cluster1::> qos statistics volume resource cpu show 
+-node nodeB
+Workload            ID   CPU
+--------------- ------ -----
+-total- (100%)       -   71%
+vs0-wid101         101   22%
+file-1-wid121      121   11%
+vol0-wid1002      1002    8%
+        • Determine top workloads
+        • See if user workloads are running (CIFS/FCP/iSCSI/NFS client work)
+        • Compare utilization across volumes
+        4. Reduce top workloads	        Click for more details
+        5. If none of the steps above work:	        • If the system is overloaded due to the high workload 
+	        • Contact account team
+	        • Request sizing exercise
+
+Additional Information:
+Information about Data Processing/CPU	        
+• What is CPU utilization in Data ONTAP: Scheduling and Monitoring?
+• How do I know if CPU is causing a performance issue?
+
+Common Issues that cause Data Processing latency:	        
+• High CIFS other latency on home directories
+• Lower than expected performance while utilizing a single volume
+
+Useful links/information:	        
+• How to identify top workloads from a user workload causing storage latency
+• How to troubleshoot FlexGroup performance issues
+• ONTAP single LUN latency at network layer since ONTAP 9.3
+• High Data Processing latency due to a bursty workload
+
+From <https://kb.netapp.com/on-prem/ontap/Perf/Perf-KBs/ONTAP_Data_Processing_latency_-_Resolution_Guide> 
+
+
