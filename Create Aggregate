@@ -1,0 +1,110 @@
+Create Aggregate / Tiers:
+
+Aggregate: Collection of 1 more raid groups.
+            Collection of disks defines raid on top of disks
+            
+            1. Root Aggregate: Contains OS, Firmware files, logs
+            2. Data Aggregate: contains volumes for data provisioning
+
+RAID Types:
+          RAID 4 - 1 dedicated parity disk
+          RAID DP - 2 dedicated parity disk - dedicated dual parity
+          RAID TEC - 3 dedicated parity disk - Triple Eraser Coding
+
+
+Exploring NetApp Aggregates: The Backbone of Your Storage Setup 🚀
+		
+		Ever heard of NetApp Aggregates? If not, they’re about to be your new best friend in the world of data storage! 🛠️
+		
+		What’s an Aggregate, Anyway?
+		In simple terms, an aggregate is a pool of disks that provides the storage resources for NetApp volumes. It’s like building a strong foundation for your data—combining multiple disks to ensure resilience, flexibility, and optimized performance. 🧱
+		
+		Why Aggregates Matter:
+		1️⃣ Capacity & Performance: Aggregates balance capacity and performance, giving your storage system the ability to handle more data with ease.
+		2️⃣ Efficiency: By pooling disks, you get better space management and simplified storage administration. 
+		3️⃣ Fault Tolerance: Aggregates are designed with redundancy to keep your data safe, even if a disk fails. 🔒
+		
+		How to Check Aggregates in NetApp:
+		To view all aggregates on your system, use the command:
+		
+		storage aggregate show
+		
+		This command gives a snapshot of your aggregates’ health and available storage, keeping you in control of your storage environment!
+		
+
+
+Cluster Login with management IP address:
+
+	Note: Node management cannot failover but cluster management IP will failover to any node to log in.
+	
+	
+	1. Create Aggregate/Tier :
+	Storage Recommendation: Share all disks to 2 nodes by default.
+
+	2. After creating an aggregate we see 2 types of aggregate
+	>> Storage aggregate show
+	The name starts with "aggr0_Cluster1_01" and "aggr0_cluster1_02"  ----> These are root aggregates
+	The name starts with "aggr1_cluster1_01" and "aggr1_cluster1_02" ------> Data Aggregates.
+	
+	Root Aggregate: Used by a particular node to store the OS and other config files.
+	Data Aggregate: to create the volumes and store the data
+	
+		a. Regular aggregates: Only HDD
+		b. Flash Pool: SSDs are used for flash cache 
+		c. Flash: Only SSDs aggregated
+		d. Fabric Pool: Aggregate is connected to the cloud storage
+	
+	
+	>> Storage aggregate show -aggregate <aggregate_name>
+	>> Storage aggregate show -aggregate <aggregate_name> -fields maxraidsize
+	
+	Aggregate: Aggregate is a collection of raid groups or disks with raid applied.
+		****	The max raid size is 24 disks ****
+			It will create 2 RAID groups if you have 2 RAIDs   48 disks
+			
+			
+	For root aggregate min 3 disks to create aggregate with RAID DP.
+	For data aggregate, we need a minimum of 5 disks.
+	
+	Capacity calculations:
+	======================
+	The market disk capacity is 2 TB.
+	When installing the disk we see only 1.8 TB is usable space.
+	
+	RAID 4: Dedicated parity disk, 1 disk failure
+	RAID DP: Dedicated parity disk, 2 disk failure
+	RAID Tec: Dedicated parity disk, 3 disk failure
+	RAID 5 & 6: Distributed parity Disk
+	
+	RAID DP used 2 dedicated parity disks (Out of 20 disks, 2 for parity and 18 for data)
+	18*1.8 = 32.4 TB
+	
+	WAFL: 
+	Write Anywhere File Layout
+The Write Anywhere File Layout is a proprietary file system that supports large, high-performance RAID arrays, quick restarts without lengthy consistency checks in the event of a crash or power failure, and growing the filesystems size quickly
+
+	
+	WAFL takes 10% space in each disk 
+	So usable is 32.4 - 3.24 = 29.16 TB usable.
+	
+	WAFL is the heart of ONTAP
+	NAS - File system
+	SAN - LUN as hard disk
+	
+	ONTAP divides each disk into 4 KB Blocks
+	Each block has its ID/index
+	An index is stored by WAFL
+
+		
+		
+
+		
+			
+			
+	
+	
+	
+	
+	
+	
+
