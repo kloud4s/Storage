@@ -1,0 +1,162 @@
+
+Pre cluster setup reqyuired details:
+======================================
+	○ Under “Initialize Storage System” Section:
+		§ “Storage System Name”: cluster1
+		§ “Administrative Password”: Netapp1!
+	○ Under “Networking” Section:
+		§ “Cluster IP Address”: 192.168.0.101
+		§ “Subnet Mask”: 24
+		§ “Gateway”: 192.168.0.1
+		§ “Node IP Address (for node serial number 70)”: 192.168.0.111
+		§ “Node IP Address (for node serial number 71)”: 192.168.0.112
+		§ “Use Domain Name Service (DNS)” checkbox: checked
+		§ “DNS Domains”: Click Add, then enter demo.netapp.com
+		§ “Name Servers”: Click Add, then enter 192.168.0.253
+	○ Under “Others” Section:
+		§ “Use time services (NTP)” checkbox: checked
+		§ “NTP Servers”: Click Add, then enter 192.168.0.1
+Click Submit.
+
+From <https://labondemand.netapp.com/sites/default/files/labguides/90/1/html/index.html> 
+
+
+
+
+
+Cluster Setup step by step process:
+======================================
+
+ONTAP 9.7
+• Clusters (Required, ECT = 20 minutes).
+	○ Explore a cluster.
+	○ View Advanced Drive Partitioning.
+	○ Create a data aggregate.
+	○ Create a Subnet.
+
+
+Cluster:
+
+A cluster is a group of physical storage controllers, or nodes, that are joined together to serve data to end users. The nodes in a cluster can pool their resources together so that the cluster can distribute its work across the member nodes. Communication and data transfer between member nodes (such as when a client accesses data on a node other than the one hosting the data) takes place over a high-speed cluster-interconnect network (10 to 100 Gb Ethernet) to which all the nodes are connected, while management and client data traffic passes over separate management and data networks configured on the member nodes.
+
+We have multiple ports in the NetApp cluster
+
+E0A, E0B: for cluster connectivity we use
+
+E0C, E0D: To connect Expansion shelf
+
+IOIOI - Serial console / To setup a new device
+
+Management ports
+
+
+Initial Configuration using CLI:
+
+Node 1: 
+
+	1. Using a serial cable connect the IOIO Port using our laptop
+	2. PuTTY “CSIMA1 Serial Console” terminal window opens but is empty. Click inside the window and press the Enter key, which will cause the cluster setup wizard to re-display the welcome text.
+	
+	3. Enabling AutoSupport can significantly speed problem determination and
+	resolution should a problem occur on your system.
+	For further information on AutoSupport, see:
+	http://support.netapp.com/autosupport/
+	Type yes to confirm and continue {yes}: yes
+	
+	Enter the node management interface port [e0c]:e0c
+	Enter the node management interface IP address: 192.168.0.111
+	Enter the node management interface netmask: 24
+	Enter the node management interface default gateway: 192.168.0.1
+	A node management interface on port e0c with IP address 192.168.0.111 has been created.
+	Use your web browser to complete cluster setup by accessing
+	https://192.168.0.111
+	Otherwise, press Enter to complete cluster setup using the command line
+	interface:
+	
+	
+	
+	
+	
+	
+Node 2: 
+
+PuTTY “CSIMA1 Serial Console” terminal window opens but is empty. Click inside the window and press the Enter key, which will cause the cluster setup wizard to re-display the welcome text.
+
+Repeat all the steps in the node 2 setup.
+
+Type yes to confirm and continue {yes}: yes
+Enter the node management interface port [e0c]: e0c
+Enter the node management interface IP address: 192.168.0.112
+Enter the node management interface netmask: 24
+Enter the node management interface default gateway: 192.168.0.1
+
+A node management interface on port e0c with IP address 192.168.0.112 has been created.
+Use your web browser to complete cluster setup by accessing
+https://192.168.0.112
+Otherwise, press Enter to complete cluster setup using the command line
+interface:
+
+
+Cluster Setup
+
+
+	1. Using a web browser/CLI to continue setting up the node
+	In the browser window address bar, enter https://192.168.0.111.
+	 
+	
+	Do you want to create a new cluster or join an existing cluster? {Create, Join} : Create
+	
+	Do you intend for this node to be used as a single-node cluster? {Yes, No} [No] :
+	
+	
+	
+	Do you want to use this configuration? {Yes, No} [Yes] :
+	
+	Enter Cluster Administrator's Password {User name "admin"} : 
+	Retype the Password : 
+	
+	Step 1 of 5: Create a Cluster
+	
+	Enter the cluster name: Enter name
+	A cluster has been created
+	
+	Step 2 of 5: Add feature License keys
+	Enter additional License keys [] : 
+	
+	Step 3 of 5: Setup a Vserver for cluster Administration
+	
+	Enter the cluster management Interface port {e0b}: IP Address
+	Netmask: 24
+	Gateway IP address : 
+	
+	Enter the DNS domain name: demo.netapp.com
+	Enter the name server IP address :
+	
+	Step 4 of 5: Configuration Storage Failover (SFO)
+	
+	SFO will be enabled when the partner joins the cluster
+	
+	Step 5 of 5: Setup the Node
+	
+	Where is the controller located: 
+	Cluster has been created
+	
+	
+	To add the node to the existing cluster
+	
+	>> System node show-discovered 
+	>> cluster add-node
+	
+	>> node show
+	>> rows 0
+	>> net int show      --> To show IP addresses of cluster and node
+	
+	
+	Login to the second console to set the controller/Node:
+	================================================
+	To join the nodes to the cluster we need to use Private IP's
+	
+	
+	After the nodes to the cluster , we see total 7 IP's
+	
+	
