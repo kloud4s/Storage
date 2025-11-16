@@ -1,0 +1,44 @@
+Let me explain Snapshot, Mirroring, Replication and Checkpoint ;
+
+☺️All four concepts - snapshots, mirroring, replication, and checkpoints - deal with data protection and management in storage systems. 
+
+👉🏻Here's a breakdown of each:
+
+🤟🏻Snapshot:
+
+✏️Think of it like a photograph capturing a specific moment. A storage snapshot freezes the state of your data at a particular point in time.
+✏️Useful for recovering from accidental deletions, malware attacks, or reverting to a known good state.
+✏️Snapshots are quick to create and use minimal storage as they only store changes since the last snapshot.
+
+🤟🏻Mirroring:
+
+✏️Imagine having a mirror image of your data. Mirroring creates an exact duplicate of your data on another storage device.
+✏️This redundancy ensures high availability. If your primary storage fails, the mirrored copy allows immediate access to your data.
+✏️Offers faster recovery times compared to snapshots, but requires double the storage capacity.
+
+🤟🏻Replication:
+
+✏️Similar to mirroring, but data is copied to a separate storage location, which can be on-site or even off-site (like the cloud).
+✏️Offers disaster recovery benefits. If a localized event (fire, flood) affects your primary storage, the replicated data at the remote location remains safe.
+✏️Replication can be continuous (constant updates) or scheduled (periodic backups). Continuous replication offers the most up-to-date copy but consumes more bandwidth.
+
+🤟🏻Checkpoint:
+
+✏️A checkpoint is a specific point within a process or database transaction where its state is recorded.
+✏️It's like a milestone marker for ongoing operations.
+✏️Checkpoints are used for rollback functionality. If an error occurs during a process, the system can revert to the last checkpoint and try again.
+✏️Checkpoints are often used in conjunction with snapshots to provide more granular recovery options.
+
+
+👉🏻Snapshots for quick rollbacks.
+👉🏻Mirroring for high availability.
+👉🏻Replication for disaster recovery.
+👉🏻Checkpoints for specific rollback points within processes or transactions.(for NAS)
+
+hashtag#snapshot
+hashtag#mirroring
+hashtag#replication
+hashtag#checkpoint
+hashtag#backup
+hashtag#storage
+hashtag#concepts
