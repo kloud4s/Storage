@@ -1,0 +1,13 @@
+LIF - Logical interface (It is an IP Address)
+Own port, own node, protocols, roles
+When creating LIF assign to a particular port.
+Roles: Node Management, Data, Intercluster
+
+SAN FC - A LIF is nothing but WWPN 
+
+Note: For Each SVM we need two Data LIFs(node1 & node2) for Data redundancy.
+
+Network --> Network Interfaces --> Create --> 
+
+To enable DNS on Each LIF to avoid the connectivity issue (Modify network on in CLI)
+::> network interface modify -lif <LIF-Name> -vserver <vserver-name> dns zone <DNS Name>
