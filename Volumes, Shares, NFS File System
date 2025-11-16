@@ -1,0 +1,107 @@
+File Shares - NFS
+ONTAP can export storage for project or home directory space, which can be accessed by Windows or UNIX clients. 
+Add volumes as the main storage container, which you can further subdivide into quota tree directories with their own quotas. 
+
+SAN
+Clients connected to SAN networks — using FC or iSCSI — access LUNs. Add LUNs with the size and performance characteristics required by your application. 
+Initiator groups list the initiator WWPNs that can access each LUN. 
+
+Volume Types
+
+	1. Flex Volume: 
+		Support both Thin and Thick volumes.
+		ONTAP7: We are unable to decrease the volume.
+		ONTAP8: We can increase and decrease the volume.
+	2. Flex Group
+	3. Flex Clone
+
+
+Create a Volume:
+
+	1. Select SVM
+	2. Volume Name
+	3. Choose the aggregate
+	4. Create volume
+	
+By default, all volumes are mountain by junction path, if not there we will manually mount.
+	
+Junction Path: Both NAS and SAN, all NAS volumes mountain in junction path
+		>> Mount volume
+		Volume name --> Junction name --> Junction path
+		 
+		
+CIFS Shares:
+	
+	1. Create Share
+	2. Folder to share or Browse the volume
+	3. Enter the share name 
+	4. After creating the share click on Edit and view the permissions or change the permissions and add user if required.
+	5. Share path name: //svm1/share1
+	6. Map to Windows network drive
+	
+	
+NFS: Linux/Unix
+We have a default export policy under NFS
+
+Export policies:
+Click on Add under Export policies 
+Create Export Rule:
+	Client IP Address
+	Enable Protocols
+	Access details
+
+Mount File System in Linux:
+	
+>> Login Linux machine using Putty
+>> df -h
+>> mkdir /share1
+>> mount -t nfs svm1:/share1  /share1
+>> cd /share1
+>> df -h
+>> ls
+
+
+If permission is denied please follow the steps.
+
+Check the security styles under the junction path, if the security style is "NTFS" we are unable to access the file system in Linux.
+
+Name Mapping:
+
+Under SVM settings --> user mapping from Windows to Unix and Unix to Windows
+
+Commands:
+
+
+  Volume Management
+
+9. Show volume status and details:
+
+vol show
+vol show -instance
+
+10. Create a new volume:
+
+vol create -vserver <vserver_name> -volume <volume_name> -aggregate <aggregate_name> -size <size>
+
+11. Resize a volume:
+
+vol size <volume_name> <new_size>
+
+12. Delete a volume:
+
+vol delete -vserver <vserver_name> -volume <volume_name>
+
+13. Bring a volume online or offline:
+
+vol online <volume_name>
+vol offline <volume_name>
+
+
+
+
+
+
+
+	
+	
+	
