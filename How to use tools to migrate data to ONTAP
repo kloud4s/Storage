@@ -1,0 +1,34 @@
+How to use tools to migrate data to ONTAP
+Applies to
+	• ONTAP 9
+	• Data Migration
+
+Description
+A variety of NetApp tools and other options exist to aid in migrating data from external (both NetApp and non-NetApp) sources to ONTAP clusters. 
+
+Procedure
+
+NetApp Tools
+NetApp provides the following options to assist with moving SAN and NAS workloads through storage-based solutions.
+
+SAN Workloads
+ONTAP Foreign LUN Import (FLI) provides both offline and online options for migrating SAN data from external sources.
+
+NAS Workload
+	• NetApp XCP enables fast and reliable any-to-NetApp and NetApp-to-NetApp data migrations and XCP file analytics provides visibility into the file system
+	• SVM data mobility provides the ability to non-disruptively relocate an SVM from a source ONTAP cluster to a destination ONTAP cluster 
+	• BlueXP Copy and Sync provides the ability to migrate NAS and Cloud provider data, S3, CIFS, NFS, Azure, AWS, Google cloud volumes
+
+Application Options
+Additional application based migration options can be used such as the following:
+	• VMware Storage vMotion
+	• Logical volume manager (LVM) based solutions
+	• Utilities such as Rsync (Linux) and Robocopy (Windows)
+
+Professional Services
+Engaging NetApp Professional Services can assist with providing Data Migration Services.
+
+Third Party Tools
+Several third party tools are available that can help migrate data to ONTAP clusters such as Datadobi DobiMigrate.
+
+From <https://kb.netapp.com/on-prem/ontap/Ontap_OS/OS-KBs/How_to_use_tools_to_migrate_data_to_ONTAP> 
