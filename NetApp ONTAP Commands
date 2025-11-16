@@ -1,0 +1,163 @@
+Performance Monitoring
+=============================
+            ::> Node run -node <node name> -command sysstat -x -m
+
+This command verifies the CPU usage.
+
+Also, we need to verify that the Disk usage is more than 90%, and we get performance issues.
+
+
+
+Cluster and Node Management
+===========================
+1. Check cluster and node status:
+            ::> cluster show
+            ::>  node show
+
+2. Check node details:		
+            ::> node show -instance
+3. Check cluster health:	
+            ::> system health status show
+4. Display cluster uptime:	
+            ::> node run -node <node_name> uptime
+
+Storage and Aggregate Management:
+==================================
+5. Show aggregate status and details:
+
+            ::> aggr show
+            ::> aggr show-space
+            ::> aggr show -instance
+
+6. Create a new aggregate:
+
+            ::> aggr create -aggregate <aggregate_name> -diskcount <number_of_disks>
+
+7. Add disks to an aggregate:
+
+            ::> aggr add-disks -aggregate <aggregate_name> -diskcount <number_of_disks>
+
+8. Check disk status:
+
+            ::> storage disk show
+
+Volume Management:
+========================
+9. Show volume status and details:
+
+            ::> vol show
+            ::> vol show -instance
+
+10. Create a new volume:
+
+            ::> vol create -vserver <vserver_name> -volume <volume_name> -aggregate <aggregate_name> -size <size>
+
+11. Resize a volume:
+
+            ::> vol size <volume_name> <new_size>
+
+12. Delete a volume:
+
+            ::> vol delete -vserver <vserver_name> -volume <volume_name>
+
+13. Bring a volume online or offline:
+
+            ::> vol online <volume_name>
+            ::> vol offline <volume_name>
+
+LUN Management
+==============================
+
+14. Show LUN status and details:
+            ::> lun show
+            ::> lun show -vserver <vserver_name>
+
+15. Create a new LUN:
+            ::> lun create -vserver <vserver_name> -path /vol/<volume_name>/<lun_name> -size <size> -ostype <os_type>
+  
+16. Map a LUN to an initiator group:
+            ::> lun map -vserver <vserver_name> -path /vol/<volume_name>/<lun_name> -igroup <igroup_name>
+
+17. Unmap a LUN:
+            ::> lun unmap -vserver <vserver_name> -path /vol/<volume_name>/<lun_name> -igroup <igroup_name>
+
+
+Snapshot Management
+==============================
+18. Create a Snapshot copy:
+            ::> snapshot create -volume <volume_name> -snapshot <snapshot_name>
+
+19. Show Snapshot copies:
+            ::> snapshot show -volume <volume_name>
+
+20. Delete a Snapshot copy:
+            ::> snapshot delete -volume <volume_name> -snapshot <snapshot_name>
+
+
+SnapMirror Management
+===============================
+21. Show SnapMirror relationships:
+            ::> snapmirror show
+
+22. Create a SnapMirror relationship:
+            ::> snapmirror create -source-path <source_vserver>:<source_volume> -destination-path <dest_vserver>:<dest_volume> -type DP
+
+23. Initialize SnapMirror:
+            ::> snapmirror initialize -destination-path <dest_vserver>:<dest_volume>
+
+24. Update SnapMirror:
+            ::> snapmirror update -destination-path <dest_vserver>:<dest_volume>
+
+
+Network Management
+=============================
+25. Show network interfaces:
+            ::> network interface show
+
+26. Create a new network interface:
+            ::> network interface create -vserver <vserver_name> -lif <lif_name> -role data -data-protocol <protocol> -home-node <node_name> -home-port <port>
+
+27. Show network ports:
+            ::> network port show
+
+
+Security and Access Management
+==============================
+28. Show CIFS shares:
+            ::> vserver cifs share show
+
+29. Create a new CIFS share:
+            ::> vserver cifs share create -vserver <vserver_name> -share-name <share_name> -path /<path>
+
+30. Show NFS exports:
+            ::> exportpolicy rule show
+
+31. Create a new NFS export rule:
+            ::> exportpolicy rule create -vserver <vserver_name> -policyname <policy_name> -clientmatch <client_IP> -rorule <read_rule> -rwrule <write_rule> -superuser <superuser_rule>
+
+
+Performance Monitoring
+==========================
+32. Check system performance:
+            ::> sysstat -x 1
+
+33. Display I/O statistics:
+            ::> statit
+
+34. Monitor network performance:
+            ::> netstat -i
+
+
+Logs and Diagnostics
+==========================
+35. Show system messages:
+            ::> event log show
+
+36. Check recent errors:
+            ::> event log show -severity ERROR
+
+37. Run a diagnostic test:
+            ::>system health alert show
+
+38. Show detailed node errors:
+            ::>node run -node <node_name> sysconfig -a
