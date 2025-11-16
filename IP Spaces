@@ -1,0 +1,17 @@
+IP spaces:
+
+Cluster:    Cluster	Broadcast Domains
+Default:    Default	Broadcast Domains
+
+
+Broadcast Domains:
+
+Cluster 	      IP Space: Cluster 
+9000 MTU 	      Cluster1-01 e0ae0b
+                Cluster1-02 e0ae0b
+
+Default 
+1500 MTU 	      IP Space: Default 
+	              Cluster1-01 e0ce0de0ee0fe0g
+	              Cluster1-02 e0ce0de0ee0fe0g
+
