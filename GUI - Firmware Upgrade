@@ -1,0 +1,68 @@
+Pre-checks:
+======================
+	1. Protocols:
+	NFS - Stateless protocol
+	CIFS/SMB - State Full protocol
+	iSCSI/FC - Multipath, HA enabled or not
+	
+	2. Note: If the cluster is up for more than 90 days, perform a failover before the upgrade.
+	
+	::> Storage failover
+	
+	Reboot SP/BMC
+	
+	3. No disks or other Hardware failures.
+	4. CPU Utilization is less than 60% on each node.
+	5. Check vulnerabilities in the current version
+	Note: Download the Upgrade advisory from the support portal and check the bug fixes in the latest version
+	6. Pause/Quiesced the snapmirror relationships.
+	Note: Before the 9.5 version we will perform the upgrade first destination later source cluster
+	From 9.6 or above, We can upgrade any cluster at any time. (Best Practice is both source and target cluster running the same version so we don't get any issues, otherwise get few compatibility issues)
+	
+	
+	Compatible ONTAP versions for Snapmirror relationship ----------- To check the compatibility versions.
+	
+	Note 1: The backward version is also eligible for respective versions.
+	
+	
+	Note 2: Before 9.5 we update the ISO file through HTTP/FTP server on your network, or to your local client, and then add it to the list of available software images.
+	
+	After 9.5 we have a direct option from GUI.
+	
+	In System Manager, click Cluster > Overview. and select ONTAP Update. Click Firmware Update. Provide the server URL or the file location
+	
+	
+	7. Steps to upload Image after 9.7 Version
+	Cluster --> Update --> Upload ISO file from local client/machine --> Click on Upload
+	Note: While upgrading the firmware if the node is rebooted more than 3 times it's an issue, so we raise a case with the support team  
+	
+	Note 2: NetApp won't upgrade the ONTAP but we raised a case with the support team if get any issues while performing the upgrade we can reach them easily. 
+	
+	8. Click on Next after uploading the image
+	9. Validate
+	10. Update
+	
+	
+Upgrade Advisor Plan - ONTAP Upgrade
+	
+Upgrade Plan ONTAP 9.14.1P1 Cluster-Mode --> 9.14.1P7 Cluster-Mode
+	
+	Index
+	Cluster details
+	Risk Summary
+	Pre-upgrade check
+	Upgrade plan
+	Backout plan
+	
+	Cluster - mfg_test_600548019-1
+	Current Version: 9.14.1P1 Target Version: 9.14.1P7 Cluster Viewer
+	EmptyLine
+	Hostname Serial Number Partner Hostname Partner Serial
+	Number
+	Model OS Version
+	mfg_test_01_60054801792-21417000044 mfg_test_02_60054801792-21418000042 ASA-C250 9.14.1P1
+	mfg_test_02_60054801792-21418000042 mfg_test_01_60054801792-21417000044 ASA-C250 9.14.1P1
+	
+	
+	
+	
