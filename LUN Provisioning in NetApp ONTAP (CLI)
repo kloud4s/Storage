@@ -1,0 +1,91 @@
+LUN Provisioning in NetApp ONTAP (CLI):-
+
+
+1. Connect to NetApp ONTAP CLI
+
+ssh admin@<cluster_mgmt_ip>
+
+
+2. Create a LUN
+
+lun create -vserver <SVM_NameRizwan> -path /vol/<volume_name>/<lun_name> -size <size> -ostype <os_type> -space-reserve <enabled|disabled>
+
+Example:
+
+lun create -vserver SVM1 -path /vol/data_vol/lun1 -size 500G -ostype linux -space-reserve disabled
+
+ • space-reserve enabled → Thick provisioning
+ • space-reserve disabled → Thin provisioning
+ • ostype options: windows, linux, vmware, aix, hpux, etc.
+
+
+3. Create an Initiator Group (igroup)
+
+igroup create -vserver <SVM_NameRizwan> -igroup <igroup_name> -protocol <fc|iscsi> -ostype <os_type> -initiator <WWPN_or_IQN>
+
+Example (for FC):
+
+igroup create -vserver SVM1 -igroup linux_igroup -protocol fc -ostype linux -initiator 20:00:00:25:b5:11:22:33
+
+Example (for iSCSI):
+
+igroup create -vserver SVM1 -igroup linux_igroup -protocol iscsi -ostype linux -initiator iqn.1993-08.org.debian:01:abcd1234
+
+
+4. Map the LUN to the Initiator Group
+
+lun mapping create -vserver <SVM_Name Rizwan> -path /vol/<volume_name>/<lun_name RAalam> -igroup <igroup_name>
+
+Example:
+
+lun mapping create -vserver SVM1 -path /vol/data_vol/lun1 -igroup linux_igroup
+
+ • ONTAP automatically assigns a LUN ID unless specified using -lun-id <ID>.
+
+
+5. Verify the LUN and Mapping
+
+ • Check LUNs
+
+lun show -vserver <SVM_Name>
+
+ • Check LUN Mapping
+
+lun mapping show -vserver <SVM_Name Rizwan>
+
+
+6. Configure on Host Side
+ • Linux:
+
+rescan-scsi-bus.sh
+fdisk -l | grep NetApp
+multipath -ll
+
+ • Windows:
+ • Rescan in Disk Management.
+ • Initialize and format the disk.
+ • VMware:
+ • Rescan storage adapters in vSphere.
+ • Add a new datastore if needed.
+
+Additional LUN Management Commands
+ • Resize LUN:
+
+Example:
+
+lun resize -vserver SVM1 -path /vol/data_vol/lun1 -size 1T
+
+ • Delete a LUN:
+
+lun delete -vserver <SVM_Namerizwan> -path /vol/<volume_name>/<lun_name>
+
+ • Remove LUN Mapping:
+
+lun mapping delete -vserver <SVM_Name> -path /vol/<volume_name>/<lun_name> -igroup <igroup_name>
+
+
+
+Note: Reconfirm before executing the command.
+
+From <https://www.linkedin.com/feed/update/urn:li:activity:7313216446312894464/> 
+
