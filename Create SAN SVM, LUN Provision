@@ -1,0 +1,159 @@
+• Storage Virtual machines for NFS and CIFS (ECT = 40 minutes)
+	○ Create a Storage Virtual Machine.
+	○ Configure the Storage Virtual Machine for CIFS and NFS access.
+	○ Create a volume on the Storage Virtual Machine.
+	○ Mount a CIFS share from the Storage Virtual Machine on a Windows client.
+	○ Mount an NFS volume from the Storage Virtual Machine on a Linux client.
+	○ Create and NFS-export Qtrees. (Optional)
+
+
+Create SAN SVM
+
+SVM Name: svm_san
+Data Protocols: iSCSI Protocols
+Volume Security Style: UNIX
+Root aggregate: select aggregate
+DNS Configuration:
+Domain name: demo.netapp.com
+Name Server: 192.168.0.253
+
+LIF - Logical interface (It is an IP Address)
+Own port, own node, protocols, roles
+When creating LIF assign to a particular port.
+Roles: Node Management, Data, Inter-cluster
+
+Configures LIFs to access the data using iSCSI Protocols.
+Data Interface(LIF) Configuration:
+
+	1. Target alias
+	LIFs per node: 2
+	2. Assigning IP address: Using subnet
+	Adapter Type: CNA/NIC
+	3. SVM Administration: VSAdmin user
+Specify the following details to enable host-side applications such as Snap Drive and Snap Manager.
+To enable the SVM Administrator to create the volumes. You must assign aggregate to the SVM by using the edit SVM dialog.
+
+
+Collect the windows iqn names to map the volumes.
+Windows Administrative Tools --> iSCSI initiator --> Configuration tab --> Copy initiator name 
+
+NetApp:
+--> Go to the LUNS --> Create initiator group --> Add the initiator name to the initiator group --> Create
+
+Windows:
+Add the SAN SVM/ SAN LIFS in Windows.
+
+iSCSI initiator --> Discover tab --> Click on discover portal --> add SAN LIFs with port 3260 --> Add
+After the IP address
+Check the initiator status under the target tab
+If not connected please connect.
+Add remaining IPs into the iSCSI with Multipath.
+
+
+LUN:
+
+Here LUN visible Local Drive (Block Storage)
+LUN Creation:
+
+Create LUN -->  LUN Name --> Select Type of LUN(Windows, VMware) --> Select existing volume or Create New Volume --> Next Tab select the igroup --> Finish
+
+
+Windows machine: 
+Run --> compmgmt.msc --> Disk management --> rescan disks -->> Online disk --> Initialize the drive
+
+When we create thin LUNS-------------> Space reservation enabled in SAN  -----> To run the space reclamation we need to run the host side to clear the space
+
+::> lun show -vserver <vserver-name> -path <lun path> -fields space-allocation 
+
+
+
+::> lun modify -vserver <vserver-name> -path <lun path> -fields space-allocation enable
+
+
+
+
+
+LUN Management
+==============================
+
+14. Show LUN status and details:
+lun show
+lun show -vserver <vserver_name>
+
+15. Create a new LUN:
+lun create -vserver <vserver_name> -path /vol/<volume_name>/<lun_name> -size <size> -ostype <os_type>
+
+16. Map a LUN to an initiator group:
+lun map -vserver <vserver_name> -path /vol/<volume_name>/<lun_name> -igroup <igroup_name>
+
+17. Unmap a LUN:
+lun unmap -vserver <vserver_name> -path /vol/<volume_name>/<lun_name> -igroup <igroup_name>
+
+
+
+
+
+
+
+
+-:SVM Failure on Production in NetApp ONTAP:-
+
+If a Storage Virtual Machine (SVM) goes down, it can cause significant disruptions depending on the SVM type and role.
+
+1. Data SVM Failure (Most Critical Impact)
+
+Impact:
+ •NAS (NFS/CIFS) disruptions -Users and applications will lose access to shared files.
+ •SAN (iSCSI/FC) downtime -LUNs hosted on the SVM will become inaccessible, causing database and application failures.
+ •Disconnected LIFs -If the data SVM goes down, its Logical Interfaces (LIFs) will become unavailable, breaking client connections.
+ •Replication & Backup failure -SnapMirror, SnapVault, and other backup jobs associated with the SVM will stop.
+
+Mitigation:
+ •SVM DR (Disaster Recovery): If configured, failover to a secondary SVM in another cluster.
+ •High Availability (HA): Ensure that the SVM is running on an HA-paired system. -Rizwan
+ •LIF Migration: If an SVM’s LIF goes down, migrate the LIF to another healthy node.
+ •Reboot & Restore: If the SVM is corrupted, restore it from backup or SnapMirror.
+
+2. Admin SVM Failure (Cluster Management Disruption)
+
+Impact:
+ •Cluster management will be unavailable -You cannot log in via SSH, ONTAP System Manager, or API.
+ •AutoSupport & Monitoring failure -Active IQ and OnCommand Unified Manager may stop collecting data.
+ •Storage provisioning issues -New volumes, LUNs, or aggregates cannot be created.
+ •No impact on data access -Existing data SVMs and workloads will continue running normally.
+
+Mitigation:
+ •Use Node SVMs for emergency access -You can manage the cluster from individual node CLI.
+ •Reboot or restore Admin SVM -Restart the affected SVM or restore from a backup.
+ •Keep a backup of Admin SVM configurations-Helps in quick recovery if corruption occurs.
+
+3. Node SVM Failure (Limited Impact)
+
+Impact:
+ •Node-specific management failure -The node will be harder to manage, but cluster-wide operations continue.
+ •No direct impact on data access unless the failed node hosts important aggregates or LIFs.
+
+Mitigation:
+ •Failover mechanisms (HA pairs) -Data should remain available through failover.
+ •Reboot the affected node to restore its Node SVM.
+
+4. System SVM Failure (Management Tool Disruption)
+
+Impact:
+ •Management tools (Active IQ, OnCommand Unified Manager, API access) will be unavailable.
+ •Does not affect data access -Users and applications can still access their data.
+
+Mitigation:
+ •Use CLI for management tasks -Cluster commands can be executed via SSH.
+ •Reboot the system SVM or restore it from a backup.
+
+How to Prevent SVM Downtime?
+ 1.Configure SVM Disaster Recovery (SVM-DR) Replicate SVM to another ONTAP system.
+ 2.Implement HA pairs -Ensure automatic failover between controllers.
+ 3.Monitor Active IQ & Alerts-Detect issues early to prevent downtime.
+ 4.Use Clustered ONTAP-Enables seamless failover of data and services.
+ 5.Backup Configuration & SnapMirror-Keep snapshots and replication in place.
+
+From <https://www.linkedin.com/feed/> 
+
+
