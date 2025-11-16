@@ -1,0 +1,162 @@
+Snapmirror: Short term
+
+Snapvault: Long-term retention
+
+7-Mode:  Buy separate license used for snap mirror and snapvalult
+C-Mode: Buy the Same license used for snap mirror and snapvalult
+
+👉🏻Snapshots for quick rollbacks.
+👉🏻Mirroring for high availability.
+👉🏻Replication for disaster recovery.
+👉🏻Checkpoints for specific rollback points within processes or transactions.(for NAS)
+
+
+
+SnapMirror:
+
+Protection policies
+Policy Type:
+
+DP Default -- Asynchronous Mirror  Replica - latest data -- based on the schedule (using for DR Activity)
+Select the mirror to update the volume
+
+Mirror latest -- Asynchronous Mirror (Don't have snapshots)
+
+DR:
+
+PR SQL LUNs -- > SQL Server --> 
+
+
+
+
+Inter-cluster network relationship to create peer relationship:
+
+
+Peering establishes a trust relationship between clusters or SVMs for sharing resources and replicating data with snapmirror.
+
+	1. Create Intercluster LIF on Both nodes:
+
+Node1:
+
+Network --> Network interface --> Create --> Verify role after creating inter-cluster
+
+Name: 	name
+Interface Role:	Intercluster connectivity
+IP Space: 	Default
+Assigning IP Address: 	Without a Subnet (Need to enter all details)
+Port: 	Select the available port under cluster
+Create	Select Create
+
+
+Node-2: Repeat the above steps on Node 2 as well.
+
+Note: Peer relation works only through inter-cluster lif.
+
+	2. Peer Relationship:
+
+Steps:
+	1. Configuration --> Cluster peers --> Create
+	Check IP Space: Default
+	2. Click submit and continue.
+	3. Enter target cluster inter-cluster LIF IP address
+	4. Select click here hyperlink
+	Enter cluster name in Option 1
+	Enter cluster password in Option 2
+	Cluster peering completed notification.
+	
+	
+	3. SVM Peering
+	 
+	Select Initiator cluster SVM and Target cluster SVM in the SVM peering screen
+	Click on Initiate SVM Peering --> Continue
+	Banner: Peering pending: You must accept the peering request from the target SVM.
+	Open 2 cluster
+	Configuration --> SVM Peering -->  Select pending request --> Click on Accept under more action link.
+	Open cluster 1
+	Click on validate peering
+	See SVM peering is successful.
+	
+	Click Done
+	
+	Notice all cluster peer relationships completed.
+	
+	
+	
+SNAP MIRROR POLICY:
+	
+	Protection --> Protection policies --> Click on Create
+	Enter details below
+	Policy Type	Asynchronous Mirror, Strict Sync, Sync, Asynchronous Mirror vault, Asynchronous vault
+	Policy Name	Enter the policy name as your choice
+	Transfer Priority	Normal
+	
+	Asynchronous Mirror -- Pure DR Enable (This policy type Async_mirror that adds the sm_created rule, within transfer all the snapshot copies created using snapmirror)
+	Strict Sync -- 
+	Sync -- Keep on update 
+	Asynchronous Mirror vault -- Keep snapshots on the volume based on the schedule, every day updated volume also if anything changes
+			This policy type of mirror_vault that adds the sm_created rule, within transfer all the snapshot copies created using snapmirror. You can also associate user-defined rules to the policy.
+	Asynchronous vault - Snapvault (Storing the snapshots with the latest data and volume also updated with the latest data)
+	synchronous vault -- Storing the snapshots with the latest  data but the volume is not updated from the day it is showing old data in volume)
+	
+	***Policy Rules:
+	Snap mirror Label	Destination Retention count
+	Hourly	10
+	Weekly	2
+	Monthly	1
+	
+	
+SNAP VAULT POLICY: Long Term retention
+
+
+SVM DR:
+	
+	Steps to verify:
+	
+	Create DR-SVM from CLI
+	::> vserver create -vserver <vserver-name> -subtype dp-destination -data-services data-iscsi,data-nfs,data-cifs,data-flexcache
+	
+	::> vserver create -vserver <vserver-name> -subtype dp-destination
+	
+	Vserver creation completed
+	Enable SVM peering in destination and click on initialization
+	Open source cluster
+	Open peers and check and accept request
+	Open Target
+	Click on validate and confirm.
+	
+	
+SVM DR Relationships: Open the source cluster click SVM DR peers, and initiate the process.
+
+
+
+	After creating DR SVM please click on initialize.
+	
+	
+	
+	
+	Snapshot Management
+	==============================
+	18. Create a Snapshot copy:
+	snapshot create -volume <volume_name> -snapshot <snapshot_name>
+	
+	19. Show Snapshot copies:
+	snapshot show -volume <volume_name>
+	
+	20. Delete a Snapshot copy:
+	snapshot delete -volume <volume_name> -snapshot <snapshot_name>
+	
+	
+	SnapMirror Management
+	===============================
+	21. Show SnapMirror relationships:
+	snapmirror show
+	
+	22. Create a SnapMirror relationship:
+	snapmirror create -source-path <source_vserver>:<source_volume> -destination-path <dest_vserver>:<dest_volume> -type DP
+	
+	23. Initialize SnapMirror:
+	snapmirror initialize -destination-path <dest_vserver>:<dest_volume>
+	
+	24. Update SnapMirror:
+	snapmirror update -destination-path <dest_vserver>:<dest_volume>
+	
