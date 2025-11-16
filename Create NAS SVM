@@ -1,0 +1,63 @@
+• Storage Virtual machines for NFS and CIFS (ECT = 40 minutes)
+	○ Create a Storage Virtual Machine.
+	○ Configure the Storage Virtual Machine for CIFS and NFS access.
+	○ Create a volume on the Storage Virtual Machine.
+	○ Mount a CIFS share from the Storage Virtual Machine on a Windows client.
+	○ Mount an NFS volume from the Storage Virtual Machine on a Linux client.
+	○ Create and NFS-export Qtrees. (Optional)
+
+
+SVM: 
+To provide the storage or provision the storage
+Create separate SVMs for NAS and SAN storage and identify the protocols
+	
+Create NAS SVM: 
+SVM Name: svm-nas
+Data Protocols: CIFS, NFS Protocols
+Volume Security Style: NTFS, UNIX, Mixed
+Root aggregate: select aggregate
+DNS Configuration:
+Domain name: demo.netapp.com
+Name Server: 192.168.0.253
+
+LIF - Logical interface (It is an IP Address)
+Own port, own node, protocols, roles
+When creating LIF assign to a particular port.
+Roles: Node Management, Data, Intercluster
+
+SAN FC - A LIF is nothing but WWPN 
+
+Configure CIFS/NFS Protocols:
+To enable CIFS, Specify the data interfaces and CIFS server details. 
+
+If you configure NFS, specify the NIS details
+To enable access to the NFS ports, add rules to the default export policy or create a new policy for the SVM. 
+While creating SVM we need an AD username and passwords
+
+Data Interface(LIF) Configuration:
+Assign specific IP address: Using a subnet or without a subnet
+Port: Select the cluster
+
+CIFS Server Configuration:
+CIFS Server name
+AD:
+Username
+Password
+
+SVM Administration:
+Specify the following details to enable host-side applications such as Snap Drive and Snap Manager.
+To enable the SVM Administrator to create the volumes. You must assign aggregate to the SVM by using the edit SVM dialog
+
+Note: For Each SVM we need two Data LIFs(node1 & node2) for Data redundancy.
+
+Network --> Network Interfaces --> Create --> 
+
+To enable DNS on Each LIF to avoid the connectivity issue (Modify network on in CLI)
+::> network interface modify -lif <LIF-Name> -vserver <vserver-name> dns zone <DNS Name>
+
+
+
+
+
+
+
